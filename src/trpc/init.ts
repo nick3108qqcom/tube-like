@@ -50,7 +50,6 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(
   }
 
   const { success } = await ratelimit.limit(user.id);
-  console.log(111, success);
   if (!success) {
     throw new TRPCError({ code: "TOO_MANY_REQUESTS" });
   }
@@ -58,7 +57,7 @@ export const protectedProcedure = t.procedure.use(async function isAuthed(
   return opts.next({
     ctx: {
       ...ctx,
-      ...user,
+      user,
     },
   });
 });
