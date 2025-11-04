@@ -3,7 +3,7 @@ import { z } from "zod/v3";
 import { eq, and } from "drizzle-orm";
 import { users, videos } from "@/db/schema";
 import { auth } from "@clerk/nextjs/server";
-import { UploadThingError } from "uploadthing/server";
+import { UploadThingError, UTApi } from "uploadthing/server";
 import { createUploadthing, type FileRouter } from "uploadthing/next";
 
 const f = createUploadthing();
@@ -35,6 +35,27 @@ export const ourFileRouter = {
 
       if (!user) throw new UploadThingError("Unauthorized");
 
+      const utapi = new UTApi();
+      const [existingVideo] = await db
+        .select({
+          thumbnailKey: videos.thumbnailKey,
+        })
+        .from(videos)
+        .where(and(eq(videos.id, input.videoId), eq(videos.userId, user.id)));
+
+      if (!existingVideo) throw new UploadThingError("Not found");
+
+      if (existingVideo.thumbnailKey) {
+        await utapi.deleteFiles(existingVideo.thumbnailKey);
+        await db
+          .update(videos)
+          .set({
+            thumbnailKey: null,
+            thumbnailUrl: null,
+          })
+          .where(and(eq(videos.id, input.videoId), eq(videos.userId, user.id)));
+      }
+
       // Whatever is returned here is accessible in onUploadComplete as `metadata`
       return { user, ...input };
     })
@@ -44,6 +65,7 @@ export const ourFileRouter = {
         .update(videos)
         .set({
           thumbnailUrl: file.url,
+          thumbnailKey: file.key,
         })
         .where(
           and(

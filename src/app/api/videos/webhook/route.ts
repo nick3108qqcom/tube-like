@@ -46,7 +46,7 @@ export const POST = async (request: Request) => {
     case "video.asset.created": {
       const data = payload.data as VideoAssetCreatedWebhookEvent["data"];
 
-      console.log("Created video data:", data);
+      console.log("Created video");
 
       if (!data.upload_id) {
         return new Response("No upload ID found", { status: 400 });
@@ -66,7 +66,7 @@ export const POST = async (request: Request) => {
       const data = payload.data as VideoAssetReadyWebhookEvent["data"];
       const playbackId = data.playback_ids?.[0].id;
 
-      console.log("Ready video data:", data);
+      console.log("Ready video");
 
       if (!data.upload_id) {
         return new Response("Missing upload ID", { status: 400 });
@@ -79,16 +79,16 @@ export const POST = async (request: Request) => {
       const previewUrl = `https://image.mux.com/${playbackId}/animated.gif`;
       // Duration is in seconds like 14.788s
       const duration = data.duration ? Math.round(data.duration * 1000) : 0;
-      // console.log("Video data:", data);
+
       await db
         .update(videos)
         .set({
           muxPlaybackId: playbackId,
           muxAssetId: data.id,
           muxStatus: data.status,
-          thumbnailUrl: thumbnailUrl,
-          previewUrl: previewUrl,
-          duration: duration,
+          thumbnailUrl,
+          previewUrl,
+          duration,
         })
         .where(eq(videos.muxUploadId, data.upload_id));
       break;
@@ -110,7 +110,7 @@ export const POST = async (request: Request) => {
     case "video.asset.deleted": {
       const data = payload.data as VideoAssetDeletedWebhookEvent["data"];
 
-      console.log("Deleted video data:", data);
+      console.log("Deleted video");
 
       if (!data.upload_id) {
         return new Response("Missing upload ID", { status: 400 });
@@ -124,7 +124,7 @@ export const POST = async (request: Request) => {
         asset_id: string;
       };
 
-      console.log("Track ready data:", data);
+      console.log("Track ready");
 
       if (!data.asset_id) {
         return new Response("Missing asset ID", { status: 400 });
