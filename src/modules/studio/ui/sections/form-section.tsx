@@ -50,6 +50,7 @@ import { snakeCaseToTitle } from "@/lib/utils";
 import { THUMBNAIL_FALLBACK } from "@/modules/videos/constants";
 import { VideoPlayer } from "@/modules/videos/ui/components/video-player";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
+import { Skeleton } from "@/components/ui/skeleton";
 interface FormSectionProps {
   videoId: string;
 }
@@ -65,7 +66,60 @@ export const FormSection = ({ videoId }: FormSectionProps) => {
 };
 
 const FormSectionSkeleton = () => {
-  return <div>Loading...</div>;
+  return (
+    <>
+      <div className="flex items-center justify-between mb-6">
+        <div className="space-y-2">
+          <Skeleton className="w-32 h-7"></Skeleton>
+          <Skeleton className="w-40 h-4"></Skeleton>
+        </div>
+        <Skeleton className="w-24 h-9"></Skeleton>
+      </div>
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+        <div className="space-y-8 lg:col-span-3">
+          <div className="space-y-2">
+            <Skeleton className="w-16 h-5"></Skeleton>
+            <Skeleton className="w-full h-10"></Skeleton>
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="w-24 h-5"></Skeleton>
+            <Skeleton className="w-full h-[220px]"></Skeleton>
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="w-20 h-5"></Skeleton>
+            <Skeleton className="w-[153px] h-[84px]"></Skeleton>
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="w-220 h-5"></Skeleton>
+            <Skeleton className="w-full h-10"></Skeleton>
+          </div>
+        </div>
+        <div className="flex flex-col gap-y-8 lg:col-span-2">
+          <div className="flex flex-col gap-4 bg-[#F9F9F9] rounded-xl overflow-hidden">
+            <Skeleton className="aspect-video" />
+            <div className="space-y-6 px-4 py-4">
+              <div className="space-y-2">
+                <Skeleton className="w-20 h-4"></Skeleton>
+                <Skeleton className="w-full h-5"></Skeleton>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="w-20 h-4"></Skeleton>
+                <Skeleton className="w-14 h-5"></Skeleton>
+              </div>
+              <div className="space-y-2">
+                <Skeleton className="w-20 h-4"></Skeleton>
+                <Skeleton className="w-10 h-5"></Skeleton>
+              </div>
+            </div>
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="w-20 h-4"></Skeleton>
+            <Skeleton className="w-full h-5"></Skeleton>
+          </div>
+        </div>
+      </div>
+    </>
+  );
 };
 
 const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
@@ -101,7 +155,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     onSuccess: async () => {
       utils.studio.getOne.invalidate({ id: videoId });
       utils.studio.getMany.invalidate();
-      toast.success('Thumbnail restored')
+      toast.success("Thumbnail restored");
     },
     onError: () => {
       toast.error("Something went wrong. Please try again.");
