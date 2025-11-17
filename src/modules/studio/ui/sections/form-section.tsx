@@ -235,10 +235,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>
-                      Title
-                      {/*TODO: Add Ai generate button */}
-                    </FormLabel>
+                    <FormLabel>Title</FormLabel>
                     <FormControl>
                       <Input
                         {...field}
