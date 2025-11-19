@@ -44,7 +44,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
     }
     createViews.mutate({ id: videoId });
   };
-  
+
   return (
     <>
       <div
@@ -54,7 +54,7 @@ const VideoSectionSuspense = ({ videoId }: VideoSectionProps) => {
         )}
       >
         <VideoPlayer
-          autoPlay
+          autoPlay={false}
           onPlay={handlePlay}
           playbackId={video.muxPlaybackId}
           thumbnailUrl={video.thumbnailUrl}
