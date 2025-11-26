@@ -10,6 +10,7 @@ interface PageProps {
 const page = async ({ params }: PageProps) => {
   const { videoId } = await params;
   trpc.videos.getOne.prefetch({ id: videoId });
+  trpc.comments.getMany.prefetch({ videoId });
 
   return (
     <HydrateClient>
