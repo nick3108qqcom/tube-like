@@ -5,6 +5,8 @@ import { formatDistanceToNow } from "date-fns";
 import { CommentGetManyOutput } from "../../types";
 import { UserAvatar } from "@/components/user-avatar";
 import {
+  ChevronUpIcon,
+  ChevronDownIcon,
   MessageSquareIcon,
   MoreVerticalIcon,
   ThumbsDownIcon,
@@ -22,13 +24,22 @@ import { trpc } from "@/trpc/client";
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { CommentForm } from "./comment-form";
+import { useState } from "react";
+import { CommentReplies } from "./comment-replies";
 
 interface CommentItemProps {
   comment: CommentGetManyOutput["items"][number];
+  variant: "comment" | "reply";
 }
 
-export const CommentItem = ({ comment }: CommentItemProps) => {
+export const CommentItem = ({
+  comment,
+  variant = "comment",
+}: CommentItemProps) => {
   const { userId: userClerkId } = useAuth();
+  const [isReplayOpen, setIsReplayOpen] = useState(false);
+  const [isRepliesOpen, setIsRepliesOpen] = useState(false);
   const clerk = useClerk();
   const utils = trpc.useUtils();
 
@@ -80,7 +91,7 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
       <div className="flex gap-4">
         <Link href={`/users/${comment.userId}`}>
           <UserAvatar
-            size="lg"
+            size={variant === "comment" ? "lg" : "sm"}
             imageUrl={comment.user?.imageUrl}
             name={comment.user.name}
           />
@@ -134,38 +145,90 @@ export const CommentItem = ({ comment }: CommentItemProps) => {
                 />
               </Button>
               <span className="text-xs text-muted-foreground">
-                {" "}
                 {comment.dislikeCounts}
               </span>
             </div>
+            {variant === "comment" && (
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8"
+                onClick={() => {
+                  setIsReplayOpen(true);
+                }}
+              >
+                Replay
+              </Button>
+            )}
           </div>
         </div>
-
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
-            <Button size="icon" variant="ghost" className="size-8">
-              <MoreVerticalIcon />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuItem onClick={() => {}}>
-              <MessageSquareIcon className="size-4" />
-              Replay
-            </DropdownMenuItem>
-            {userClerkId === comment.user.clerkId && (
-              <DropdownMenuItem
-                onClick={() => {
-                  deleteComment.mutate({ commentId: comment.id });
-                }}
-                disabled={deleteComment.isPending}
-              >
-                <Trash2Icon className="size-4" />
-                Delete
-              </DropdownMenuItem>
-            )}
-          </DropdownMenuContent>
-        </DropdownMenu>
+        {(variant === "comment" ||
+          (variant === "reply" && userClerkId === comment.user.clerkId)) && (
+          <DropdownMenu modal={false}>
+            <DropdownMenuTrigger asChild>
+              <Button size="icon" variant="ghost" className="size-8">
+                <MoreVerticalIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              {variant === "comment" && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    setIsReplayOpen(true);
+                  }}
+                >
+                  <MessageSquareIcon className="size-4" />
+                  Replay
+                </DropdownMenuItem>
+              )}
+              {userClerkId === comment.user.clerkId && (
+                <DropdownMenuItem
+                  onClick={() => {
+                    deleteComment.mutate({ commentId: comment.id });
+                  }}
+                  disabled={deleteComment.isPending}
+                >
+                  <Trash2Icon className="size-4" />
+                  Delete
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )}
       </div>
+      {variant === "comment" && isReplayOpen && (
+        <div className="mt-2 ml-12">
+          <CommentForm
+            videoId={comment.videoId}
+            variant="replay"
+            parentId={comment.id}
+            onCancel={() => {
+              setIsReplayOpen(false);
+            }}
+            onSuccess={() => {
+              setIsReplayOpen(false);
+              setIsRepliesOpen(true);
+            }}
+          />
+        </div>
+      )}
+      {comment.replyCount > 0 && variant === "comment" && (
+        <div className="pl-14">
+          <Button
+            size="sm"
+            variant="tertiary"
+            onClick={() => {
+              setIsRepliesOpen(!isRepliesOpen);
+            }}
+          >
+            {isRepliesOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
+            {comment.replyCount} replies
+          </Button>
+        </div>
+      )}
+      {isRepliesOpen && (
+        <CommentReplies parentId={comment.id} videoId={comment.videoId} />
+      )}
     </div>
   );
 };

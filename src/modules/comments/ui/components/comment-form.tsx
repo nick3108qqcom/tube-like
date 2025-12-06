@@ -18,10 +18,19 @@ import { toast } from "sonner";
 
 interface CommentFormProps {
   videoId: string;
+  variant: "comment" | "replay";
+  parentId?: string;
   onSuccess?: () => void;
+  onCancel?: () => void;
 }
 
-export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
+export const CommentForm = ({
+  videoId,
+  onSuccess,
+  variant = "comment",
+  parentId,
+  onCancel,
+}: CommentFormProps) => {
   const { user } = useUser();
   const clerk = useClerk();
   const utils = trpc.useUtils();
@@ -46,12 +55,18 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
     resolver: zodResolver(commentInsertSchema.omit({ userId: true })),
     defaultValues: {
       videoId,
+      parentId,
       value: "",
     },
   });
 
   const handleSubmit = (values: z.infer<typeof commentInsertSchema>) => {
     create.mutate(values);
+  };
+
+  const handleCancel = () => {
+    form.reset();
+    onCancel?.();
   };
   return (
     <Form {...form}>
@@ -74,7 +89,11 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
                   <Textarea
                     {...field}
                     className="resize-none bg-transparent overflow-hidden min-h-0"
-                    placeholder="Add a comment..."
+                    placeholder={
+                      variant === "comment"
+                        ? "Add a comment..."
+                        : "Replay this comment..."
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -82,8 +101,18 @@ export const CommentForm = ({ videoId, onSuccess }: CommentFormProps) => {
             )}
           />
           <div className="justify-end gap-2 mt-2 flex">
+            {onCancel && (
+              <Button
+                type="button"
+                size="sm"
+                onClick={handleCancel}
+                disabled={create.isPending}
+              >
+                Cancel
+              </Button>
+            )}
             <Button type="submit" size="sm" disabled={create.isPending}>
-              Comment
+              {variant === "comment" ? "Comment" : "Replay"}
             </Button>
           </div>
         </div>
