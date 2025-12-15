@@ -18,7 +18,11 @@ interface VideoMenuProps {
   variant?: "ghost" | "secondary";
   onRemove?: () => void;
 }
-export const VideoMenu = ({ variant, videoId, onRemove }: VideoMenuProps) => {
+export const VideoMenu = ({
+  variant = "ghost",
+  videoId,
+  onRemove,
+}: VideoMenuProps) => {
   const onShare = () => {
     const fullUrl = `${
       process.env.VERCEL_URL || "http://localhost:3000"
@@ -28,7 +32,7 @@ export const VideoMenu = ({ variant, videoId, onRemove }: VideoMenuProps) => {
     toast.success("Link copied to the clipboard");
   };
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant={variant} size="icon" className="rounded-full">
           <MoreVerticalIcon />
