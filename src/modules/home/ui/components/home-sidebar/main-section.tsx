@@ -17,8 +17,8 @@ const items = [
     icon: HomeIcon,
   },
   {
-    title: "Subscriptions",
-    href: "/feed/subscriptions",
+    title: "Subscribed",
+    href: "/feed/subscribed",
     icon: PlaySquareIcon,
     auth: true,
   },
