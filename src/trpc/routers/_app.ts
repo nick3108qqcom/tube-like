@@ -1,4 +1,5 @@
 import { createTRPCRouter } from "../init";
+import { searchRouter } from "@/modules/search/server/procedures";
 import { videosRouter } from "@/modules/videos/server/procedures";
 import { studioRouter } from "@/modules/studio/server/procedures";
 import { commentsRouter } from "@/modules/comments/server/procedures";
@@ -19,6 +20,7 @@ export const appRouter = createTRPCRouter({
   comments: commentsRouter,
   commentReactions: commentReactionsRouter,
   suggestions: suggestionsRouter,
+  search: searchRouter,
 });
 
 // export type definition of API

@@ -51,6 +51,7 @@ import { THUMBNAIL_FALLBACK } from "@/modules/videos/constants";
 import { VideoPlayer } from "@/modules/videos/ui/components/video-player";
 import { ThumbnailUploadModal } from "../components/thumbnail-upload-modal";
 import { Skeleton } from "@/components/ui/skeleton";
+import { APP_URL } from "@/constants";
 interface FormSectionProps {
   videoId: string;
 }
@@ -172,9 +173,7 @@ const FormSectionSuspense = ({ videoId }: FormSectionProps) => {
     update.mutate(data);
   };
 
-  const fullUrl = `${
-    process.env.VERCEL_URL || "http://localhost:3000"
-  }/videos/${video.id}`;
+  const fullUrl = `${APP_URL}/videos/${video.id}`;
 
   const [isCopied, setIsCopied] = useState(false);
 
