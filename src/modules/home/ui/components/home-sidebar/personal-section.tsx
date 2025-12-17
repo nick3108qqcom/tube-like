@@ -27,7 +27,7 @@ const items = [
   },
   {
     title: "All playlists",
-    href: "/feed/trending",
+    href: "/playlists",
     icon: ListVideoIcon,
     auth: true,
   },
