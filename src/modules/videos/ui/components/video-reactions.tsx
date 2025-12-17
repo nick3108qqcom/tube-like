@@ -2,12 +2,12 @@
 
 import { cn } from "@/lib/utils";
 import { trpc } from "@/trpc/client";
+import { VideoGetOneOutput } from "../../types";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@radix-ui/react-separator";
-import { ThumbsUpIcon, ThumbsDownIcon } from "lucide-react";
-import { useClerk } from "@clerk/nextjs";
 import { toast } from "sonner";
-import { VideoGetOneOutput } from "../../types";
+import { useClerk } from "@clerk/nextjs";
+import { ThumbsUpIcon, ThumbsDownIcon } from "lucide-react";
 
 interface VideoReactionsProps {
   videoId: string;
@@ -29,7 +29,7 @@ export const VideoReactions = ({
       utils.videos.getOne.invalidate({
         id: videoId,
       });
-      // TODO: invalidate 'liked' playlist
+      utils.playlists.getLiked.invalidate();
     },
     onError: (error) => {
       toast.error("something went wrong");
@@ -44,6 +44,7 @@ export const VideoReactions = ({
       utils.videos.getOne.invalidate({
         id: videoId,
       });
+      utils.playlists.getLiked.invalidate();
     },
     onError: (error) => {
       toast.error("something went wrong");
