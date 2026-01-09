@@ -29,7 +29,7 @@ export const playlists = pgTable("playlists", {
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const playlistsReactions = relations(playlists, ({ one, many }) => ({
+export const playlistsRelations = relations(playlists, ({ one, many }) => ({
   user: one(users, {
     fields: [playlists.userId],
     references: [users.id],
@@ -57,12 +57,12 @@ export const playlistsVideos = pgTable(
   ]
 );
 
-export const playlistsVideosReactions = relations(
+export const playlistsVideosRelations = relations(
   playlistsVideos,
   ({ one }) => ({
     playlist: one(playlists, {
       fields: [playlistsVideos.playlistId],
-      references: [playlists.id], 
+      references: [playlists.id],
     }),
     video: one(videos, {
       fields: [playlistsVideos.videoId],
