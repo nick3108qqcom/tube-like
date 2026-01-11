@@ -8,8 +8,7 @@
     "dev:all": "concurrently \"npm run dev:webhook\" \"npm run dev\"",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "db:studio": "bunx drizzle-kit studio"
+    "lint": "next lint"
   },
   "dependencies": {
     "@clerk/nextjs": "6.33.6",
