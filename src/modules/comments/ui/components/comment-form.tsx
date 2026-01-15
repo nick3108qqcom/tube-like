@@ -52,7 +52,7 @@ export const CommentForm = ({
   });
 
   const form = useForm<z.infer<typeof commentInsertSchema>>({
-    resolver: zodResolver(commentInsertSchema.omit({ userId: true })),
+    resolver: zodResolver(commentInsertSchema),
     defaultValues: {
       videoId,
       parentId,

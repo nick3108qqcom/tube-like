@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { SearchIcon, XIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { APP_URL } from "@/constants";
 import { Button } from "@/components/ui/button";
 
-export default function SearchInput() {
+export const SearchInput = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SearchInputSuspense />
+    </Suspense>
+  );
+};
+
+export function SearchInputSuspense() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
